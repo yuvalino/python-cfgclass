@@ -1,4 +1,4 @@
-from .namespace import Namespace
+from .cfgnamespace import Namespace
 from .parsing import parse_file
 
 

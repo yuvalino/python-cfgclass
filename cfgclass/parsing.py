@@ -5,6 +5,7 @@ import tokenize
 
 from .cfgfile import File
 from .cfgclass import Class
+from .cfgscope import Scope
 
 
 class ParseError(Exception):
@@ -20,6 +21,56 @@ class TryParseError(ParseError):
     Any parsing state should be reset when this exception goes up the call stack.
     """
     pass
+
+class Parser(object):
+    """
+    Base parser.
+    """
+    def __init__(self, clex_object):
+        """
+        :type clex_object: clex.clex
+        """
+        self._clex = clex_object
+
+    def parse(self, scope):
+        """
+        Parse an instance of parser's type.
+        :type scope: Scope
+        :raise ParseError: When a fatal error occurs.
+        :raise TryParseError: When a non-fatal parsing error occurs (clex state is restored).
+        """
+        raise NotImplementedError
+
+    @property
+    def clex(self):
+        return self._clex
+
+
+class StringParser(Parser):
+
+    def parse(self, scope):
+        value =
+
+class ArrayParser(object):
+    pass
+
+class ScopeParser(Parser):
+    def __init__(self, clex_object, parent):
+        """
+        :type clex_object: clex.clex
+        """
+        super(ScopeParser, self).__init__(clex_object, parent)
+
+    def _parse_property(self):
+
+        parsed_property = None
+        for inner_type in (ClassParser, PrimitiveParser, ArrayParser):
+            try:
+                parsed_property = inner_type(self.clex, self.parent)
+            except TryParseError:
+                continue
+
+
 
 
 class ClassParser(object):
